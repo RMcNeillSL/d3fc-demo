@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="bitCoinApp">
+	<head>
+	
+		<!-- Declare various things for the page -->
+		<meta charset="utf-8">
+		<title>Bitcoin Grapher</title>
+	
+		<!-- Load JavaScript libraries -->
+	    <script src="lib/angular_1_3_15.js"></script>
+	    <script src="lib/angular_1_3_15_resource.min.js"></script>
+	    <script src="lib/angular_1_3_15_route.min.js"></script>
+	    <script src="lib/jquery_1_9_1.min.js"></script>
+	    
+		<!-- Load D3FC -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.4/d3.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/css-layout/0.0.6/css-layout.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3fc/1.4.0/d3fc.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/d3fc/1.4.0/d3fc.css" rel="stylesheet"/>
+	
+	</head>
+	<body>
+		<div class="main">
+			<section class="mainWrapper">
+				<div ng-view></div>
+			</section>
+			<section class="mainFooter">
+			</section>
+		</div>
+		<link href="app/app.css" rel="stylesheet"/>
+		<script src="app/app.js"></script>
+		<script src="app/common.js"></script>
+		<script src="app/home/homeModule.js"></script>
+		<script src="app/home/homeController.js"></script>
+		<script src="app/home/homeDirective.js"></script>
+		<script src="app/home/homeService.js"></script>
+	</body>
+</html>
