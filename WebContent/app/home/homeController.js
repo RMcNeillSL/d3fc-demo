@@ -10,6 +10,11 @@
 		this.$location = $location;
 		this.$window = $window;
 		this.homeService = homeService;
+		
+		// Local variables
+		var self = this;
+		var companyDataReady = false;
+		var companyData = [];
 
 		// Demo graph
 		var demoGraphCreate = function() {
@@ -99,28 +104,78 @@
 					}
 				}
 				
-//				console.log(breakdown);
 				d.date = new Date(breakdown.year, breakdown.month, breakdown.day);
-//				d.date = new Date(d.Timestamp * 1000);
 				return d;
 			}).get(function(error, rows) { renderChart(rows); });
 		});
 		
-		this.homeService.getDataForCompany("YHOO", function(jsonData) {
+		// Create waiter to create graph once all data has been gathered
+		(new Waiter(function() {
+			return companyDataReady;
+		}, function() {
 			googleStockGraphCreate('get-request-test', function(renderChart) {
-				
+
 				// Construct data array
 				var data = [];
-				for (var index = 0; index < jsonData.data.query.results.length; index ++) {
+				for (var index = 0; index < companyData.length; index ++) {
 					var dataItem = {
-							close : jsonData.data.query.results[index]
+							close : companyData[index].Close,
+							open : companyData[index].Open,
+							date : new Date(companyData[index].Date)
 					}
+					data.push(dataItem);
 				}
+				
+				console.log(data);
 				
 				// Pass data to chart to load
 				renderChart(data);
 			});
-		});
+		}, 10)).start();
+		
+		// Function to format date into nice form
+		var formatDate = function(year, month, day) {
+			var monthString = month.toString();
+			var dayString = day.toString();
+			if (monthString.length == 1) { monthString = "0" + monthString; }
+			if (dayString.length == 1) { dayString = "0" + dayString; }
+			return year.toString() + "-" + monthString + "-" + dayString;
+		}
+		
+		// Function to gather data
+		var getCompanyData = function(companyCode, yearCount, startYear, startMonth, startDay) {
+			
+			// Declare variables
+			var recursionDepth = 0;
+			var year, month, day;
+			if (startYear)  { year = startYear + recursionDepth; } 	else { startYear = 2010; }
+			if (startMonth) { month = startMonth; } 				else { startMonth = 1; }
+			if (startDay)   { day = startDay; } 					else { startDay = 2; }
+
+			// Define callback function
+			var callback = function(jsonData) {
+				
+				// Save gathered data
+				for (var index = jsonData.data.query.results.quote.length-1; index >= 0; index --) {
+					companyData.push(jsonData.data.query.results.quote[index]);
+				}
+				
+				// Begin new recursion
+				recursionDepth ++;
+				year = startYear + recursionDepth;
+				if (recursionDepth < yearCount) {
+					self.homeService.getDataForCompany(companyCode, callback, formatDate(year, month, day), formatDate(year+1, month, day-1));
+				} else {
+					companyDataReady = true;
+				}
+			};
+			
+			// Begin data collection
+			self.homeService.getDataForCompany(companyCode, callback, formatDate(year, month, day), formatDate(year+1, month, day-1));
+		}
+		
+		// Get test graph information
+		getCompanyData("PYPL", 1, 2013, 1, 2);
 	} 
 
 	HomeController.$inject = ['$rootScope', '$scope', '$location', '$window', 'bitCoinApp.home.service'];
