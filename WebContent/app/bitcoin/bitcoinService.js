@@ -2,33 +2,91 @@
 
 (function () {
 	
-	function BitcoinService($rootScope, $http) {
-		
+	function BitcoinService($rootScope, $http, $resource) {
 		// Save passed variables
 		this.$http = $http;
 		this.$rootScope = $rootScope;
+		this.$resource = $resource;
 	}
 	
 	BitcoinService.prototype = {
-			getDataForCompany : function(companyCode, callback) {
-				var startDate = "2009-09-11";
-				var endDate = "2010-03-10";
-				var completeQuery = "https://query.yahooapis.com/v1/public/yql?q=select Date, Open, Close from yahoo.finance.historicaldata where symbol = '" + companyCode +
-									"' and startDate = '" + startDate + "' and endDate = '" + endDate + "'&format=json&env=http://datatables.org/alltables.env&callback=";
-				console.log(completeQuery);
-				this.$http.get(completeQuery).then(function(jsonResponse) {
-					if (callback) { callback(jsonResponse); }
-				}, function(errorResponse) {
+			getUnconfirmedCount: function (callback) {
+				this.$http.get("https://blockchain.info/q/unconfirmedcount?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
 					if (errorResponse.status !== 200) {
 						console.log("ERROR.");		//TODO: Add more error checking
 					}
 				});
-			}
-// -- https://query.yahooapis.com/v1/public/yql?q=select Date, Open, Close from yahoo.finance.historicaldata where symbol = "YHOO" and startDate = "2009-09-11" and endDate = "2010-03-10"&format=json&env=http://datatables.org/alltables.env&callback=
-//			      https://query.yahooapis.com/v1/public/yql?q=select Open, Close from yahoo.finance.historicaldata where symbol = "YHOO" and startDate = "2009-09-11" and endDate = "2010-03-10" & env=http://datatables.org/alltables.env
+			},
+			getDayPrice: function (callback) {
+				this.$http.get("https://blockchain.info/q/24hrprice?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+			getMarketCap: function (callback) {
+				this.$http.get("https://blockchain.info/q/marketcap?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+			getDayTransactions: function (callback) {
+				this.$http.get("https://blockchain.info/q/24hrtransactioncount?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+			getDayCoins: function (callback) {
+				this.$http.get("https://blockchain.info/q/24hrbtcsent?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+			getHashRate: function (callback) {
+				this.$http.get("https://blockchain.info/q/hashrate?cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+			getTransactionFeeData: function (callback) {
+				this.$http.get("https://blockchain.info/charts/total-bitcoins?format=json&cors=true").then(function(response) {
+					if (callback) { callback (response.data); }
+				}, function (errorResponse) {
+					if (errorResponse.status !== 200) {
+						console.log("ERROR.");		//TODO: Add more error checking
+					}
+				});
+			},
+//			getTransactionFeeData: function (callback) {
+//				this.$resource("https://blockchain.info/charts/transaction-fees?format=json", {}, {
+//					get: {
+//						method: "GET",
+//						headers: { "Access-Control-Allow-Origin": "*" }
+//					}
+//				});
+//			}
+			
+			//https://blockchain.info/latestblock							<- Returns height info as well
+			//https://blockchain.info/block-height/379152?format=json		<- Change numbers for height increments
 	}
 	
-	BitcoinService.$inject = ['$rootScope', '$http'];
+	BitcoinService.$inject = ['$rootScope', '$http', '$resource'];
 	
 	angular.module('bitCoinApp.bitcoin.module').service('bitCoinApp.bitcoin.service', BitcoinService);
 }());

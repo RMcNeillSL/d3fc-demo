@@ -1,5 +1,5 @@
 <div class="bca-bitcoin">
-	<div id="chart"></div>
+	<!-- <div id="chart"></div>
 	<br/><br/><br/><br/><br/>
 	<svg id='time-series' style='height: 300px; width: 800px;'>
 		<defs>
@@ -20,5 +20,12 @@
 	          <stop offset="100%" stop-opacity="0" stop-color="#1a9af9" />
 	        </linearGradient>
       </defs>
-	</svg>
+	</svg> -->
+	
+	<p>Unconfirmed Count	: {{ miscMarketData.unconfirmedCount }}</p>
+	<p>Day Price			: {{ miscMarketData.dayPrice }}</p>
+	<p>Market Cap			: {{ miscMarketData.marketCap }}</p>
+	<p>Day Transactions		: {{ miscMarketData.dayTransactions }}</p>
+	<p>Day Coins			: {{ miscMarketData.dayCoins }}</p>
+	<p>Hash Rate			: {{ miscMarketData.hashRate }}</p>
 </div>
